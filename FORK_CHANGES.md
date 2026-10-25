@@ -1,6 +1,6 @@
 ---
-version: "1.0"
-updated: 2026-10-17
+version: "1.1"
+updated: 2026-10-25
 ---
 
 # Fork Changes
@@ -22,9 +22,12 @@ Fork: techsimplellc/cal.diy (product branch `custom`, deployed by Ansible)
 | Change | Branch | Type | Upstream PR | Status |
 |---|---|---|---|---|
 | Remove upstream `CLAUDE.md` (symlink to `AGENTS.md`) so the claude-config context symlink can be used | committed on `main` (d7c2b4b), carried on `custom` | fork-only | n/a | move off `main` pending |
+| Pass `NEXT_PUBLIC_FORMBRICKS_*` to the Docker web build (Next.js inlines them at build time) | `fix/docker-formbricks-build-args` | fix | none | Not yet proposed |
+| Formbricks surveys run anonymously: drop `setUserId`/`setAttributes` (Enterprise-only, 403 without a license) | `fork/formbricks-anonymous` | fork-only | n/a | Fork-only |
 
 ## Version History
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1 | 2026-10-25 | Formbricks build-arg fix and anonymous-survey fork change |
 | 1.0 | 2026-10-17 | Ledger created |
