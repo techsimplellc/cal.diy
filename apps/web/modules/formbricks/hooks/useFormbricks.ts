@@ -4,46 +4,25 @@ import { useEffect } from "react";
 
 import useMeQuery from "@calcom/trpc/react/hooks/useMeQuery";
 
-const initFormbricks = async ({
-  userId,
-  attributes,
-}: {
-  userId: string;
-  attributes: { [key: string]: string | null | undefined };
-}) => {
-  const filteredAttributes: Record<string, string> = {};
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (value !== null && value !== undefined) {
-      filteredAttributes[key] = value;
-    }
-  });
-
+// User identification (setUserId / setAttributes) is a Formbricks Enterprise
+// feature: without a license the self-hosted server rejects it with 403, so
+// surveys run anonymously for signed-in users.
+export const initFormbricks = async (): Promise<void> => {
   if (process.env.NEXT_PUBLIC_FORMBRICKS_HOST_URL && process.env.NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID) {
     await formbricks.setup({
       environmentId: process.env.NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID,
       appUrl: process.env.NEXT_PUBLIC_FORMBRICKS_HOST_URL,
     });
-    await formbricks.setUserId(userId);
-    await formbricks.setAttributes(filteredAttributes);
   }
 };
 
-export const useFormbricks = () => {
+export const useFormbricks = (): void => {
   const { data: user, isLoading } = useMeQuery();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!isLoading && user && session) {
-      initFormbricks({
-        userId: user.id.toString(),
-        attributes: {
-          name: user?.name,
-          email: user.email,
-          username: user?.username,
-          belongsToActiveTeam: session.user.belongsToActiveTeam?.toString(),
-          isOrganizationAdmin: user.organization?.isOrgAdmin?.toString(),
-        },
-      });
+      initFormbricks();
     }
-  }, [isLoading, user, status, session]);
+  }, [isLoading, user, session]);
 };
